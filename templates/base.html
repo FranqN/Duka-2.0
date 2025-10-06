@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1"> <!-- Responsive meta -->
+    <title>{% block title %}Duka{% endblock %}</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .navbar-brand {
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+        .container {
+            margin-top: 2rem;
+        }
+    </style>
+    {% block head %}{% endblock %}
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="{{ url_for('home') }}">Duka POS</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    {% if session.get('user_id') %}
+                        {% if session.get('role') == 'admin' %}
+                            <li class="nav-item"><a class="nav-link" href="{{ url_for('admin_dashboard') }}"><i class="bi bi-speedometer2"></i> Dashboard</a></li>
+                        {% endif %}
+                        <li class="nav-item"><a class="nav-link" href="{{ url_for('products_page') }}"><i class="bi bi-box-seam"></i> Products</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{{ url_for('customers_list') }}"><i class="bi bi-person-lines-fill"></i> Customers</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{{ url_for('make_sale') }}"><i class="bi bi-cash-stack"></i> Make Sale</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{{ url_for('sales_list') }}"><i class="bi bi-receipt"></i> Sales List</a></li>
+                        {% if session.get('role') != 'staff' %}
+                        <li class="nav-item"><a class="nav-link" href="{{ url_for('sales_breakdown') }}"><i class="bi bi-bar-chart-line"></i> Sales Breakdown</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{{ url_for('suppliers_list') }}"><i class="bi bi-truck"></i> Suppliers</a></li>
+                        {% endif %}
+                        {% if session.get('role') == 'admin' %}
+                            <li class="nav-item"><a class="nav-link" href="{{ url_for('user_list') }}"><i class="bi bi-people"></i> Users</a></li>
+                            <li class="nav-item"><a class="nav-link" href="{{ url_for('audit_logs') }}"><i class="bi bi-journal-text"></i> Audit Logs</a></li>
+                            <li class="nav-item"><a class="nav-link" href="{{ url_for('system_settings') }}"><i class="bi bi-gear"></i> Settings</a></li>
+                        {% endif %}
+                        <li class="nav-item"><a class="nav-link" href="{{ url_for('logout') }}"><i class="bi bi-box-arrow-right"></i> Logout</a></li>
+                    {% else %}
+                        <li class="nav-item"><a class="nav-link" href="{{ url_for('login') }}"><i class="bi bi-box-arrow-in-right"></i> Login</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{{ url_for('signup') }}"><i class="bi bi-person-plus"></i> Sign Up</a></li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <!-- Add a top margin to your main content -->
+    <main class="pt-4">
+        <div class="container">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }} alert-dismissible fade show mt-3" role="alert">
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+            {% block content %}{% endblock %}
+        </div>
+    </main>
+    <!-- Bootstrap JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    {% block scripts %}{% endblock %}
+</body>
+</html>
